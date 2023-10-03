@@ -28,4 +28,27 @@ namespace my_books.Data.ViewModels
 
         public List<int>  AuthorIds { get; set; }  // Book birden fazl authora sahip olabilir , bu sebeple author Id lerini listede tutuyoruz.
     }
+    public class BookWithAuthorsVM
+    {
+        public string Title { get; set; }
+
+        public string Description { get; set; }
+
+        public bool IsRead { get; set; }
+
+        public DateTime? DateRead { get; set; } // dateread opsiyonel olacak "?" işaretiyle, kitap olmazsa okuma süresi de olmaz.
+
+        public int? Rate { get; set; }
+
+        public string Genre { get; set; }
+
+        public string CoverUrl { get; set; }
+
+
+       
+
+        public string PublisherName { get; set; }  
+
+        public List<string> AuthorNames { get; set; }  // Book birden fazl authora sahip olabilir , bu sebeple author Id lerini listede tutuyoruz.
+    }
 }
