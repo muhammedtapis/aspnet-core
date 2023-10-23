@@ -66,10 +66,26 @@ namespace my_books.Data.Services
 
         }
 
-        public Book GetBookById(int bookId) {
+        //Authors of Books ve books of authors için bunu değiştrimemiz lazım.
+        public BookWithAuthorsVM GetBookById(int bookId) {
 
-            return _context.Books.FirstOrDefault(n => n.Id == bookId); //FirstOrDefault methodundaki n.id bookId parametresine eşitledik.
-            //firstorDEfault methodu entity frameworkten geliyor.
+            var _bookwithauthors = _context.Books.Where( n => n.Id == bookId).Select(book => new BookWithAuthorsVM() //where methodunda methoddan gelen id books
+                                                                                                                //modeldeki id ile karşılaştırılıyor.
+                                                                                                                //kullanıcıya sadece kitapları gösterceğimiz için View model yaptk
+            {
+                Title = book.Title,
+                Description = book.Description,
+                IsRead = book.IsRead,
+                DateRead = book.IsRead ? book.DateRead.Value : null,//book zaten okunmuş mu onu kontrol ettik önce eğer okunmamışsa null olcak.
+                Rate = book.IsRead ? book.Rate : null, //aynı şekilde puanlama yapabilmek için okunmuş olması gerek, eğer okunnmamışsa 0 verilcek.
+                Genre = book.Genre,
+                CoverUrl = book.CoverUrl,
+                PublisherName = book.Publisher.Name, //kitapları listelerken publisher isimlerini göstercek
+                AuthorNames = book.Book_Authors.Select(n => n.Author.FullName).ToList() //
+
+            }).FirstOrDefault() ;
+
+            return _bookwithauthors;
         }
 
         public Book UpdateBookById(int bookId, BookVM book) { //BookVM olmasının sebebi sadece kullanıcının değişebeliceği özellikleri
