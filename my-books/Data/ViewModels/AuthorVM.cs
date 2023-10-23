@@ -6,7 +6,7 @@ namespace my_books.Data.ViewModels
     {
         public string FullName { get; set; }
     }
-
+    //muhammet mensur
     public class AuthorWithBooksVM
     {
         public string FullName { get; set;}
