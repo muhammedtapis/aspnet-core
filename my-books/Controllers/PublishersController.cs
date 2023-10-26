@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using my_books.ActionResults;
+using my_books.Data.Models;
 using my_books.Data.Services;
 using my_books.Data.ViewModels;
 using my_books.Exceptions;
@@ -56,18 +58,36 @@ namespace my_books.Controllers
 
         [HttpGet("get-publisher-by-id/{id}")]
 
-        public IActionResult GetPublisherById(int id)
+        public IActionResult GetPublisherById(int id) //changing return type to Publisher and change back again.
+                                                                //return type ActionResult<T> olursa hem http status code hem de publisher aynı anda gönderiliyor.
+                                                                //iki return typeta da sıkıntı çıkmıyor
+                                                                //en son CustomActionREsult yaptık
         {
            
             var _response = _publishersService.GetPublisherById(id);
 
             if(_response != null)
             {
-                return Ok(_response);
+                return Ok(_response); //return type IActionResult olduğu için değiştirdik tekrar
+              //  return _response; //return type Publisher olduğu için _response olarak değişti. Return type generic ActionResult<T> ise de çalışıyor.
+                //var _responseObj = new CustomActionResultVM()
+                //{
+                //    Publisher = _response
+                //};
+
+                //return new CustomActionResult(_responseObj);
             }
             else
             {
-                return NotFound();
+                 return NotFound(); //return type ActionResult<T> olduğu için iki türlü de oluo.
+                // return null;
+
+                //var _responseObj = new CustomActionResultVM()
+                //{
+                //    Exception = new Exception("this is coming from publishers controller")
+                //};
+
+                //return new CustomActionResult(_responseObj);
             }
             
         }
