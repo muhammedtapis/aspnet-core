@@ -1,8 +1,11 @@
 ﻿using my_books.Data.Models;
+using my_books.Data.Paging;
 using my_books.Data.ViewModels;
 using my_books.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace my_books.Data.Services
@@ -18,6 +21,42 @@ namespace my_books.Data.Services
             _context = context;
 
         }
+
+        public List<Publisher> GetAllPublishers(string sortBy,string searchString,int? pageNumber) //pagenumber optional yapıldı.
+        {
+            var allPublishers = _context.Publishers.OrderBy(n => n.Name).ToList();
+
+            ////SORTING
+
+            if (!string.IsNullOrEmpty(sortBy)) //gelen stringde veri var mı null check
+            {
+                switch (sortBy) //switch kulanmamızın nedeni başka string parametresine göre arama yapabilmek istersek ekleyebliriz.
+                {
+                    case "name_desc": //eğer name_desc geliyosa isme göre sırala
+                        allPublishers=allPublishers.OrderByDescending(n => n.Name).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            ////FILTERING
+
+            if (!string.IsNullOrEmpty(searchString))    //gelen stringde veri var mı null check
+            {
+                allPublishers = allPublishers.Where(n=> n.Name.Contains(searchString,StringComparison.CurrentCultureIgnoreCase)).ToList(); //bu methodda filtreleme var searchStringden gelen stringi içeren veriyi gösteriyor.
+                                                                                                                                            //built-in StringComparison methodunda searchString verisinde büyük küçük harf ayrımını ortadan kaldırdık.
+            }
+
+            ////PAGING Paging için helper class oluşturduk data klasöründe.
+            ///
+            int pageSize = 5;
+            allPublishers = PaginatedList<Publisher>.Create(allPublishers.AsQueryable(), pageNumber ?? 1,pageSize); //eğer pageNumber yoksa 1. i sayfayı al.
+            
+
+
+            return allPublishers;
+        } 
 
         public Publisher AddPublisher(PublisherVM publisher)  // return type  publisher olarak değiştik çünkü HTTP endpointte status değişti
                                                               // OK değil Created oldu sebebi ise bir kanyak oluşturduk publisher ekleyerek.
